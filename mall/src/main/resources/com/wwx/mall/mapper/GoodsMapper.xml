@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wwx.mall.mapper.GoodsMapper">
+
+
+
+    <select id="selectGood" resultMap="gory">
+        select * from cskaoyan_mall_goods where id=#{idz}
+    </select>
+
+    <select id="selectSpecification" resultType="com.wwx.mall.bean.Specification">
+        select * from cskaoyan_mall_goods_specification where goods_id=#{id}
+    </select>
+    <select id="selectProduct" resultType="com.wwx.mall.bean.Product">
+        select * from cskaoyan_mall_goods_product where goods_id=#{id}
+    </select>
+    <select id="selectattribute" resultType="com.wwx.mall.bean.Attribute">
+        select * from cskaoyan_mall_goods_attribute where goods_id=#{id}
+    </select>
+<resultMap id="gory" type="com.wwx.mall.bean.Goods">
+
+    <result column="gallery" property="gallery" typeHandler="com.wwx.mall.typehander.ListTypeHandler"></result>
+</resultMap>
+
+<resultMap id="categoryMap" type="com.wwx.mall.bean.Cate">
+<result column="id" property="value"></result>
+<result column="name" property="label"/>
+    <collection property="children" column="id" select="com.wwx.mall.mapper.GoodsMapper.selectChildren"/>
+</resultMap>
+    <select id="selectCategorys" resultMap="categoryMap">
+        select id,name from cskaoyan_mall_category where pid=0
+    </select>
+    <resultMap id="categoryChildrenMap" type="java.util.HashMap">
+        <result column="id" property="value"></result>
+        <result column="name" property="label"/>
+    </resultMap>
+
+    <select id="selectChildren" resultMap="categoryChildrenMap">
+        select id,name from cskaoyan_mall_category where pid=#{id}
+
+    </select>
+
+<resultMap id="brand" type="java.util.HashMap">
+    <result column="id" property="value"></result>
+    <result column="name" property="label"/>
+
+
+</resultMap>
+
+
+    <select id="selectBrand" resultMap="brand">
+        select id,name from cskaoyan_mall_brand
+    </select>
+    <select id="queryGoods" resultType="com.wwx.mall.bean.Goods">
+        select * from cskaoyan_mall_goods
+        <where>
+            1=1
+            <if test="goodsSn!=0">
+                and id=#{goodsSn}
+            </if>
+            <if test="name!= null">
+                and  name like "%"#{name}"%"
+            </if>
+        </where>
+    </select>
+</mapper>
